@@ -342,7 +342,7 @@ Instructions:
                         {"role": "user", "content": prompt_content},
                     ],
                     temperature=0.1,  # Low temperature for deterministic output
-                    max_tokens=400,
+                    max_tokens=1000,
                 )
 
                 # Output response
