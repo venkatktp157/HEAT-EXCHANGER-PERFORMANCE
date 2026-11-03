@@ -339,15 +339,16 @@ Equipment Details & Design Benchmarks:
 - Capacity Ratio (r): {r:.4f}
 
 Diagnostic Instructions:
-1. **Diagnostic Summary (3-4 bullet points):**
+1. **Diagnostic Summary (4 explicit bullet points):**
    - **Fouling Margin Assessment:** Evaluate `U_op` against `U_d` and `U_clean`. If `U_op >= U_d` (drop <= {fouling_margin:.1f}%), explicitly state that performance is within the {fouling_margin:.1f}% design fouling allowance and NO immediate cleaning is required. If `U_op < U_d`, state that the design margin is EXHAUSTED.
+   - **Thermal Effectiveness & Capacity Assessment:** State the operating Thermal Effectiveness (E = {E:.4f}) and Capacity Ratio (r = {r:.4f}). Interpret whether the unit is operating in a balanced flow regime (r ≈ 1.0) or asymmetric flow regime (r << 1.0) and how effectively it is extracting available heat.
    - **Hydraulic Comparison:** Compare operating ΔP against design values to detect flow restrictions or channel clogging.
    - **Maintenance Recommendation:** Recommend specific maintenance actions (e.g., CIP chemical cleaning or plate inspection for PHE; tube rodding/bundle pulling for STHE) ONLY if the fouling margin is exhausted or ΔP is abnormally elevated.
 
-2. **Brief Engineering Insight (1 short paragraph, 2-3 sentences max):**
-   - Provide a quick physical explanation connecting the thermal metrics (U-value, LMTD, Rd, Thermal Effectiveness, Capacity Ratio) to operational root causes (e.g., fluid velocity drops, thermal boundary layer buildup, or bio-fouling vs. scaling behavior).
+2. **Brief Engineering Insight (1 short paragraph, 3-4 sentences):**
+   - Provide a concise physical explanation connecting the U-value drop, LMTD shift, fouling factor (Rd), Thermal Effectiveness (E), and Capacity Ratio (r) to operational root causes (e.g., unequal fluid heat capacities, flow imbalance, boundary layer growth, or bio-fouling vs. scaling behavior).
 
-Maintain an objective, technical tone without fluff or length padding."""
+Maintain an objective, engineering-grade tone without fluff or unnecessary padding."""
 
                 target_model = "openai/gpt-oss-120b"  # Production model on Groq
 
