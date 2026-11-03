@@ -341,7 +341,7 @@ Diagnostic Instructions:
    - **Maintenance Recommendation:** Recommend specific maintenance actions (e.g., CIP chemical cleaning or plate inspection for PHE; tube rodding/bundle pulling for STHE) ONLY if the fouling margin is exhausted or ΔP is abnormally elevated.
 
 2. **Brief Engineering Insight (1 short paragraph, 2-3 sentences max):**
-   - Provide a quick physical explanation connecting the thermal metrics (U-value, LMTD, Rd) to operational root causes (e.g., fluid velocity drops, thermal boundary layer buildup, or bio-fouling vs. scaling behavior).
+   - Provide a quick physical explanation connecting the thermal metrics (U-value, LMTD, Rd, Effectiveness, Capacity ratio) to operational root causes (e.g., fluid velocity drops, thermal boundary layer buildup, or bio-fouling vs. scaling behavior).
 
 Maintain an objective, technical tone without fluff or length padding."""
 
