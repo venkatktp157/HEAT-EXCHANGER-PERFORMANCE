@@ -333,6 +333,7 @@ Equipment Details & Design Benchmarks:
 - Corrected LMTD: Operating = {lmtd_corr:.2f} °C | Design = {lmtdc:.2f} °C
 - Calculated Fouling Resistance (Rd): {Rd:.4f} m²-K/kW
 - Thermal Effectiveness (E): {E:.4f}
+- Capacity Ratio (r): {r:.4f}
 
 Diagnostic Instructions:
 1. **Diagnostic Summary (3-4 bullet points):**
@@ -341,7 +342,7 @@ Diagnostic Instructions:
    - **Maintenance Recommendation:** Recommend specific maintenance actions (e.g., CIP chemical cleaning or plate inspection for PHE; tube rodding/bundle pulling for STHE) ONLY if the fouling margin is exhausted or ΔP is abnormally elevated.
 
 2. **Brief Engineering Insight (1 short paragraph, 2-3 sentences max):**
-   - Provide a quick physical explanation connecting the thermal metrics (U-value, LMTD, Rd, Effectiveness, Capacity ratio) to operational root causes (e.g., fluid velocity drops, thermal boundary layer buildup, or bio-fouling vs. scaling behavior).
+   - Provide a quick physical explanation connecting the thermal metrics (U-value, LMTD, Rd, Thermal Effectiveness, Capacity Ratio) to operational root causes (e.g., fluid velocity drops, thermal boundary layer buildup, or bio-fouling vs. scaling behavior).
 
 Maintain an objective, technical tone without fluff or length padding."""
 
