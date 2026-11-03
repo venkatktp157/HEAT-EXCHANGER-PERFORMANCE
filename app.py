@@ -250,16 +250,45 @@ elif f_mode == "Input F Manually":
 lmtd_corr = F * lmtd
 U = Q / (A * lmtd_corr) if (A * lmtd_corr) > 0 else 0.0
 
-# Thermal Effectiveness & Capacity Ratio
-Ch = Win * Cph / 3600
-Cc = win * Cpc / 3600
-Cmin = min(Ch, Cc)
-Cmax = max(Ch, Cc)
+# ---------------------------------------------------------
+# Heat Exchanger Effectiveness & Capacity Ratio Calculation
+# ---------------------------------------------------------
+
+# 1. Calculate sensible heat capacity rates (kW/°C)
+Ch = Win * Cph / 3600.0
+Cc = win * Cpc / 3600.0
+
+# 2. Account for phase change (condensing steam or boiling fluid)
+if λh > 0:
+    # Hot fluid condenses (isothermal), C_hot -> infinity
+    Cmin = Cc
+    Cmax = float("inf")
+    r = 0.0
+elif λc > 0:
+    # Cold fluid boils (isothermal), C_cold -> infinity
+    Cmin = Ch
+    Cmax = float("inf")
+    r = 0.0
+else:
+    # Standard sensible heat exchange
+    Cmin = min(Ch, Cc)
+    Cmax = max(Ch, Cc)
+    r = Cmin / Cmax if Cmax > 0 else 0.0
+
+# 3. Calculate Maximum Heat Transfer & Effectiveness
 Tmax = Thin - Tcin
 
-Qmax = Cmin * Tmax if Thin > Tcin else 1.0
-E = Q / Qmax if Qmax > 0 else 0.0
-r = Cmin / Cmax if Cmax > 0 else 0.0
+if Thin <= Tcin:
+    st.error("Qmax: Invalid Values - Check Input values of Temperatures")
+    Qmax = 1.0
+    E = 0.0
+else:
+    Qmax = Cmin * Tmax
+    E = Q / Qmax if Qmax > 0 else 0.0
+
+# Display results in Streamlit
+st.markdown(f"**Effectiveness of Heat Exchanger ($\epsilon$):** `{E:.4f}`")
+st.markdown(f"**Heat Capacity Ratio ($r$):** `{r:.4f}`")
 
 # Fouling Factor
 Rd = (1 / U - 1 / Ud) if (U > 0 and Ud > 0) else 0.0
