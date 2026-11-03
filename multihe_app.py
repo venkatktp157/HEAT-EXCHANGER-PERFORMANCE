@@ -336,7 +336,7 @@ Instructions:
                         {"role": "user", "content": prompt_content},
                     ],
                     temperature=0.1,
-                    max_tokens=600,
+                    max_tokens=1000,
                 )
 
                 st.markdown(completion.choices[0].message.content)
