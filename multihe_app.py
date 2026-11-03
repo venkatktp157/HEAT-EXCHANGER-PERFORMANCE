@@ -53,11 +53,18 @@ with col1:
         "Total Design Heat Duty (kW)", min_value=1.0, value=25623.0, format="%.2f"
     )
     Ud = st.number_input(
-        "Overall Heat Transfer Coefficient U_d (kW/m²-K)",
+        "Overall Heat Transfer Coefficient U_d (Design/Service) (kW/m²-K)",
         min_value=0.001,
-        value=3.500 if he_type == "Plate Heat Exchanger (PHE)" else 1.178,
+        value=7.235 if he_type == "Plate Heat Exchanger (PHE)" else 1.178,
         format="%.4f",
     )
+    # --- ADD FOULING MARGIN FIELD HERE ---
+    fouling_margin = st.number_input(
+        "Design Fouling Margin (%)", min_value=0.0, max_value=50.0, value=15.0, step=1.0, format="%.1f"
+    )
+
+# Compute clean theoretical U-value based on margin
+U_clean = Ud * (1.0 + (fouling_margin / 100.0))
 
 with col2:
     ΔPh = st.number_input(
@@ -308,38 +315,52 @@ else:
             try:
                 client = Groq(api_key=api_key)
 
+                # Calculate percentage drop from clean baseline
+                u_drop_percent = ((U_clean - U) / U_clean) * 100.0 if U_clean > 0 else 0.0
+
                 prompt_content = f"""
 You are an expert thermal process engineer. Evaluate the operational metrics of this {he_type}:
 
-Equipment Details:
-- Type: {he_type}
+Equipment Details & Design Benchmarks:
+- Equipment Type: {he_type}
 - Flow Configuration: {flow_type} (F = {F:.3f})
 - Thermal Duty (Q): Operating = {Q:.2f} kW | Design = {Qd:.2f} kW
-- Heat Transfer Coeff (U): Operating = {U:.3f} kW/m²-K | Design = {Ud:.3f} kW/m²-K
+- Service Heat Transfer Coeff (U_d): {Ud:.3f} kW/m²-K
+- Clean Heat Transfer Coeff (U_clean): {U_clean:.3f} kW/m²-K (includes {fouling_margin:.1f}% Design Fouling Margin)
+- Current Operating U-Value (U_op): {U:.3f} kW/m²-K (Thermal Drop vs Clean = {u_drop_percent:.1f}%)
 - Hot Side Pressure Drop (ΔPh): Operating = {Δph:.2f} bar | Design = {ΔPh:.2f} bar
 - Cold Side Pressure Drop (ΔPc): Operating = {Δpc:.2f} bar | Design = {ΔPc:.2f} bar
 - Corrected LMTD: Operating = {lmtd_corr:.2f} °C | Design = {lmtdc:.2f} °C
-- Calculated Fouling Factor (Rd): {Rd:.4f} m²-K/kW
+- Calculated Fouling Resistance (Rd): {Rd:.4f} m²-K/kW
 - Thermal Effectiveness (E): {E:.4f}
 
-Instructions:
+Diagnostic Instructions:
 1. Provide a concise, 3-to-4 bullet point diagnostic summary tailored specifically to a {he_type}.
-2. Compare thermal performance ($U$-value drop) and hydraulic performance ($\Delta P$ increase).
-3. Recommend specific maintenance procedures relevant to this unit type (e.g., CIP chemical flushing, plate re-gasketing, or backflushing for PHE; tube rodding/bundle pulling for STHE).
-4. Maintain a formal, engineering-grade tone.
+2. EVALUATE THE FOULING MARGIN ({fouling_margin:.1f}%):
+   - If U_op >= U_d (U-drop <= {fouling_margin:.1f}%): Explicitly state that the exchanger is operating within its built-in {fouling_margin:.1f}% fouling margin and does NOT require immediate maintenance.
+   - If U_op < U_d (U-drop > {fouling_margin:.1f}%): Explicitly state that the {fouling_margin:.1f}% design fouling margin has been EXHAUSTED and thermal degradation exceeds safe limits.
+3. Compare hydraulic performance (ΔP changes vs design) to check for channel clogging.
+4. Recommend specific maintenance actions (e.g., CIP chemical flushing, plate re-gasketing for PHE; tube rodding/bundle pulling for STHE) ONLY if the fouling margin is exhausted or ΔP is excessively high.
+5. Maintain a formal, engineering-grade tone.
 """
 
+                target_model = "llama-3.3-70b-versatile"  # Production model on Groq
+
                 completion = client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
+                    model=target_model,
                     messages=[
                         {"role": "system", "content": "You are a precise industrial energy efficiency analyst."},
                         {"role": "user", "content": prompt_content},
                     ],
                     temperature=0.1,
-                    max_tokens=1000,
+                    max_tokens=600,
                 )
 
-                st.markdown(completion.choices[0].message.content)
+                ai_response = completion.choices[0].message.content
+                if ai_response:
+                    st.markdown(ai_response)
+                else:
+                    st.warning("Received an empty response from LLM provider.")
 
             except Exception as e:
                 st.error(f"Failed to generate evaluation from Groq API: {e}")
