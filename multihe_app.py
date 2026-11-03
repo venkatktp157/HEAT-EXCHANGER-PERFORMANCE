@@ -344,7 +344,7 @@ Diagnostic Instructions:
 5. Maintain a formal, engineering-grade tone.
 """
 
-                target_model = "llama-3.3-70b-versatile"  # Production model on Groq
+                target_model = "openai/gpt-oss-120b"  # Production model on Groq
 
                 completion = client.chat.completions.create(
                     model=target_model,
