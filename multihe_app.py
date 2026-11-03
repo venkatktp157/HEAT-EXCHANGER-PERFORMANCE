@@ -19,8 +19,10 @@ st.set_page_config(
 st.title("ENERGY EFFICIENCY MODULE-HEAT EXCHANGERS")
 st.subheader("HEAT EXCHANGER PERFORMANCE ASSESSMENT")
 
-st.write("""Heat Exchangers can deteriorate over time due to off-design operation, fouling, 
-scaling, or corrosion. <br>
+st.write("""
+Heat Exchangers can deteriorate over time due to off-design operation, fouling, 
+scaling, or corrosion.
+
 This tool periodically assesses thermal duty, heat transfer coefficients ($U$), 
 effectiveness ($\epsilon$), and hydraulic pressure drops ($\Delta P$) for both Shell & Tube and Plate Exchangers.
 """)
