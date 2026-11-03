@@ -321,6 +321,21 @@ else:
                 # Calculate percentage drop from clean baseline
                 u_drop_percent = ((U_clean - U) / U_clean) * 100.0 if U_clean > 0 else 0.0
 
+                # --- DYNAMIC PHASE CHANGE / STEAM DETECTION LOGIC ---
+                is_condensing_steam = (λh > 0) or (r == 0.0) or (Δth <= 1.0)
+                
+                if is_condensing_steam:
+                    phase_context = f"""
+- Phase-Change Operating Regime: DETECTED (Hot Side is Condensing Steam/Vapor, Latent Heat λh = {λh:.2f} kJ/kg).
+- Thermodynamic Context on Capacity Ratio (r = {r:.4f}): In condensing exchangers, C_max approaches infinity (constant pressure phase change), which naturally forces Capacity Ratio r = 0.0. THIS IS THERMODYNAMICALLY CORRECT AND EXPECTED.
+- Thermodynamic Context on Effectiveness (E = {E:.4f}): For steam heaters with large temperature driving forces (e.g., steam at 164°C heating water to 80°C), effectiveness is constrained by NTU (E = 1 - e^-NTU) and typically operates between 0.35 and 0.50. A value of E ≈ {E:.4f} is NORMAL DESIGN BEHAVIOR for this equipment, NOT a sign of exchanger failure or degradation.
+"""
+                else:
+                    phase_context = f"""
+- Phase-Change Operating Regime: Single-Phase Liquid-to-Liquid / Gas.
+- Capacity Ratio (r = {r:.4f}): Standard sensible heat capacity ratio (C_min / C_max).
+"""
+
                 prompt_content = f"""
 You are an expert thermal process engineer. Evaluate the operational metrics of this {he_type}:
 
@@ -337,6 +352,7 @@ Equipment Details & Design Benchmarks:
 - Calculated Fouling Resistance (Rd): {Rd:.4f} m²-K/kW
 - Thermal Effectiveness (E): {E:.4f}
 - Capacity Ratio (r): {r:.4f}
+{phase_context}
 
 Diagnostic Instructions:
 1. **Diagnostic Summary (4 explicit bullet points):**
