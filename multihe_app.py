@@ -335,14 +335,15 @@ Equipment Details & Design Benchmarks:
 - Thermal Effectiveness (E): {E:.4f}
 
 Diagnostic Instructions:
-1. Provide a concise, 3-to-4 bullet point diagnostic summary tailored specifically to a {he_type}.
-2. EVALUATE THE FOULING MARGIN ({fouling_margin:.1f}%):
-   - If U_op >= U_d (U-drop <= {fouling_margin:.1f}%): Explicitly state that the exchanger is operating within its built-in {fouling_margin:.1f}% fouling margin and does NOT require immediate maintenance.
-   - If U_op < U_d (U-drop > {fouling_margin:.1f}%): Explicitly state that the {fouling_margin:.1f}% design fouling margin has been EXHAUSTED and thermal degradation exceeds safe limits.
-3. Compare hydraulic performance (ΔP changes vs design) to check for channel clogging.
-4. Recommend specific maintenance actions (e.g., CIP chemical flushing, plate re-gasketing for PHE; tube rodding/bundle pulling for STHE) ONLY if the fouling margin is exhausted or ΔP is excessively high.
-5. Maintain a formal, engineering-grade tone.
-"""
+1. **Diagnostic Summary (3-4 bullet points):**
+   - **Fouling Margin Assessment:** Evaluate `U_op` against `U_d` and `U_clean`. If `U_op >= U_d` (drop <= {fouling_margin:.1f}%), explicitly state that performance is within the {fouling_margin:.1f}% design fouling allowance and NO immediate cleaning is required. If `U_op < U_d`, state that the design margin is EXHAUSTED.
+   - **Hydraulic Comparison:** Compare operating ΔP against design values to detect flow restrictions or channel clogging.
+   - **Maintenance Recommendation:** Recommend specific maintenance actions (e.g., CIP chemical cleaning or plate inspection for PHE; tube rodding/bundle pulling for STHE) ONLY if the fouling margin is exhausted or ΔP is abnormally elevated.
+
+2. **Brief Engineering Insight (1 short paragraph, 2-3 sentences max):**
+   - Provide a quick physical explanation connecting the thermal metrics (U-value, LMTD, Rd) to operational root causes (e.g., fluid velocity drops, thermal boundary layer buildup, or bio-fouling vs. scaling behavior).
+
+Maintain an objective, technical tone without fluff or length padding."""
 
                 target_model = "openai/gpt-oss-120b"  # Production model on Groq
 
@@ -353,7 +354,7 @@ Diagnostic Instructions:
                         {"role": "user", "content": prompt_content},
                     ],
                     temperature=0.1,
-                    max_tokens=600,
+                    max_tokens=1000,
                 )
 
                 ai_response = completion.choices[0].message.content
